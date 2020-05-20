@@ -1,0 +1,136 @@
+# coding=utf8
+import time
+from bs4 import BeautifulSoup
+from urllib.request import urlopen
+import requests
+
+""" 겹치는 제목과 링크"""
+old_titles=[]
+old_links=[]
+same_titles=[]
+same_links=[]
+"""키워드 입력"""
+print("몇개의 키워드를 설정하시겠습니까?(숫자로 입력바람)", end=' ')
+num = int(input())
+
+"""키워드 넣을 리스트"""
+search_word = []
+
+"""몇번째인지 알기위한 변수"""
+newcnt=0
+
+"""링크 따내는 함수"""
+def extract_links(old_links=[],same_links=[]):
+    
+    links = []
+
+    for news in old_links[:5]:
+        link = news
+        links.append(link)
+#    print(links)    
+        
+    new_links=[]
+    
+    for a in links:
+        if a not in same_links:
+            new_links.append(a)
+            
+    """
+        for a in links:
+        if links not in same_links:
+            new_links.append(a)     
+    """
+    
+    return new_links
+
+"""제목 따내는 함수"""   
+def extract_titles(old_titles=[],same_titles=[]):
+    
+    links = []
+    
+    for news in old_titles[:5]:
+        link = news
+        links.append(link)
+#    print(links)
+    
+    new_titles=[]
+    for a in links:
+        if a not in same_titles:
+            new_titles.append(a)
+
+    return new_titles
+
+for i in range(num):
+    print("%d번째 키워드를 입력하세요" % (i+1), end=' ')
+    key = input()
+    search_word.append(key)
+
+"""
+url = f'https://news.naver.com/main/list.nhn?mode=LSD&mid=sec&sid1=001'
+req = requests.get(url)
+html = req.text
+soup = BeautifulSoup(html, 'html.parser')
+
+old_titles=[]
+old_links=[]
+    
+    for anchor in soup.select("dt.photo"):
+        news_list = anchor.find("img")["alt"]
+        old_titles.append(news_list)
+    
+    for anchor in soup.select("dt.photo"):
+        old_links.append(anchor.find("a")["href"])
+"""
+       
+for i in range(20000):
+    newcnt = newcnt+1
+    url = f'https://news.naver.com/main/list.nhn?mode=LSD&mid=sec&sid1=001'
+    req = requests.get(url)
+    html = req.text
+    soup = BeautifulSoup(html, 'html.parser')
+
+    
+    for anchor in soup.select("dt.photo"):
+        news_list = anchor.find("img")["alt"]
+        old_titles.append(news_list)
+    
+    for anchor in soup.select("dt.photo"):
+        old_links.append(anchor.find("a")["href"])
+        
+ #   print(old_titles)   
+ #   print(old_links)
+
+    
+    new_titles=extract_titles(old_titles,same_titles)
+    new_links=extract_links(old_links,same_links)
+    
+#    print(new_titles)
+#    print(new_links)
+    
+    for l in search_word:
+        cnt=0
+        for h in new_titles:
+            if l in h:
+                #newcnt=newcnt+cnt
+                print('===',l,'관련 기사===\n',new_titles[cnt],'\n',new_links[cnt],'\n')
+            cnt=cnt+1
+    if(newcnt % 3 == 0):
+        imsi_titles = old_titles.copy()
+        imsi_links = old_links.copy()
+        del same_titles[:]
+        del same_links[:]
+        same_titles = imsi_titles.copy()
+        same_links = imsi_links.copy()
+#        print(same_titles)
+#        print(same_links)
+        newcnt = 0
+    same_titles = same_titles + new_titles.copy()
+    same_links = same_links + new_links.copy()
+    same_titles = list(same_titles)
+    same_links = list(same_links)
+    del old_titles[:]
+    del old_links[:]
+#    print(same_titles)
+#    print(same_links)
+
+    time.sleep(3)
