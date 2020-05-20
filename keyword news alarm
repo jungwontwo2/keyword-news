@@ -26,8 +26,7 @@ def extract_links(old_links=[],same_links=[]):
 
     for news in old_links[:5]:
         link = news
-        links.append(link)
-#    print(links)    
+        links.append(link)   
         
     new_links=[]
     
@@ -51,7 +50,6 @@ def extract_titles(old_titles=[],same_titles=[]):
     for news in old_titles[:5]:
         link = news
         links.append(link)
-#    print(links)
     
     new_titles=[]
     for a in links:
@@ -64,23 +62,6 @@ for i in range(num):
     print("%d번째 키워드를 입력하세요" % (i+1), end=' ')
     key = input()
     search_word.append(key)
-
-"""
-url = f'https://news.naver.com/main/list.nhn?mode=LSD&mid=sec&sid1=001'
-req = requests.get(url)
-html = req.text
-soup = BeautifulSoup(html, 'html.parser')
-
-old_titles=[]
-old_links=[]
-    
-    for anchor in soup.select("dt.photo"):
-        news_list = anchor.find("img")["alt"]
-        old_titles.append(news_list)
-    
-    for anchor in soup.select("dt.photo"):
-        old_links.append(anchor.find("a")["href"])
-"""
        
 for i in range(20000):
     newcnt = newcnt+1
@@ -88,24 +69,16 @@ for i in range(20000):
     req = requests.get(url)
     html = req.text
     soup = BeautifulSoup(html, 'html.parser')
-
-    
+   
     for anchor in soup.select("dt.photo"):
         news_list = anchor.find("img")["alt"]
         old_titles.append(news_list)
     
     for anchor in soup.select("dt.photo"):
         old_links.append(anchor.find("a")["href"])
-        
- #   print(old_titles)   
- #   print(old_links)
-
     
     new_titles=extract_titles(old_titles,same_titles)
     new_links=extract_links(old_links,same_links)
-    
-#    print(new_titles)
-#    print(new_links)
     
     for l in search_word:
         cnt=0
@@ -121,8 +94,6 @@ for i in range(20000):
         del same_links[:]
         same_titles = imsi_titles.copy()
         same_links = imsi_links.copy()
-#        print(same_titles)
-#        print(same_links)
         newcnt = 0
     same_titles = same_titles + new_titles.copy()
     same_links = same_links + new_links.copy()
@@ -130,7 +101,4 @@ for i in range(20000):
     same_links = list(same_links)
     del old_titles[:]
     del old_links[:]
-#    print(same_titles)
-#    print(same_links)
-
     time.sleep(3)
